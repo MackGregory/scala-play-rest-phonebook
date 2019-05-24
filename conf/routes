@@ -1,11 +1,7 @@
-GET     /                                   controllers.HomeController.phones
-GET     /phones                             controllers.HomeController.phones
-POST    /phones/addPhone                    controllers.HomeController.addPhoneNumber
-
-GET     /phonesj                            controllers.HomeController.phonesJson
-POST    /phonesj/addPhonej                  controllers.HomeController.addPhoneNumberJson
-POST    /phonesj/:id                        controllers.HomeController.updatePhone(id: Int)
-DELETE  /phonesj/:id                        controllers.HomeController.deletePhone(id: Int)
+GET     /phones                             controllers.HomeController.phonesJson
+POST    /phones/addPhone                    controllers.HomeController.addPhoneNumberJson
+POST    /phones/:id                         controllers.HomeController.updatePhone(id: Int)
+DELETE  /phones/:id                         controllers.HomeController.deletePhone(id: Int)
 
 
 # Map static resources from the /public folder to the /assets URL path

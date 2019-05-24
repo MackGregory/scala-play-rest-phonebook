@@ -10,10 +10,4 @@
     }
   </table>
 
-  <h2>Add phone number</h2>
-  @form(CSRF(routes.HomeController.addPhoneNumber())){
-    @inputText(phoneForm("number"))
-    @inputText(phoneForm("name"))
-    <input type="submit" value="Add">
-  }
 }
