@@ -1,5 +1,5 @@
-GET     /phones                             controllers.HomeController.phonesJson
-POST    /phones/addPhone                    controllers.HomeController.addPhoneNumberJson
+GET     /phones                             controllers.HomeController.phones
+POST    /phones/addPhone                    controllers.HomeController.addPhoneNumber
 POST    /phones/:id                         controllers.HomeController.updatePhone(id: Int)
 DELETE  /phones/:id                         controllers.HomeController.deletePhone(id: Int)
 

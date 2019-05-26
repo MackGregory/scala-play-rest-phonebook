@@ -3,16 +3,26 @@ package controllers
 import javax.inject._
 import play.api.mvc._
 import models.Phone
+import services.PhoneServiceImpl
 import play.api.libs.json._
 
+import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
+import scala.util.matching.Regex
+
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with play.api.i18n.I18nSupport {
+class HomeController @Inject()(cc: ControllerComponents, phoneService: PhoneServiceImpl)(implicit ec: ExecutionContext) extends AbstractController(cc) with play.api.i18n.I18nSupport {
   implicit val phoneWrites: Writes[Phone] = Json.writes[Phone]
   implicit val phoneReads: Reads[Phone] = Json.reads[Phone]
 
-  def phones() = Action { request =>
-    val json = Json.toJson(Phone.all)
-    Ok(json)
+  private def validatePhoneNumber(number: String): Boolean = {
+    val reg: Regex = """^([+])(\d)(\d{10})$""".r
+    reg.pattern.matcher(number).matches
+  }
+
+  def phones() = Action.async { request =>
+    phoneService.getAllPhones
+      .map(list => Ok(Json.toJson(list)))
   }
 
   def addPhoneNumber = Action(parse.json) { request =>
@@ -22,14 +32,14 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
         BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(errors)))
       },
       phone => {
-        Phone.create(phone.number, phone.name)
+        phoneService.addNewPhone(phone)
         Ok(Json.obj("status" -> "OK", "message" -> s"Phone ${phone.number} saved."))
       }
     )
   }
 
   def deletePhone(id: Int) = Action { request =>
-    Phone.delete(id)
+    phoneService.deletePhone(id)
     Ok(Json.obj("status" -> "OK", "message" -> s"Phone with id $id deleted."))
   }
 
@@ -40,10 +50,9 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
         BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(errors)))
       },
       phone => {
-        Phone.update(id, phone.number, phone.name)
+        phoneService.updatePhoneData(id, phone)
         Ok(Json.obj("status" -> "OK", "message" -> s"Phone #$id updated."))
       }
     )
   }
-
 }
