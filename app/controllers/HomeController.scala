@@ -2,57 +2,67 @@ package controllers
 
 import javax.inject._
 import play.api.mvc._
-import models.Phone
+import models.{Phone, Response}
 import services.PhoneServiceImpl
 import play.api.libs.json._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 import scala.util.matching.Regex
 
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents, phoneService: PhoneServiceImpl)(implicit ec: ExecutionContext) extends AbstractController(cc) with play.api.i18n.I18nSupport {
-  implicit val phoneWrites: Writes[Phone] = Json.writes[Phone]
-  implicit val phoneReads: Reads[Phone] = Json.reads[Phone]
+class HomeController @Inject()(cc: ControllerComponents, phoneService: PhoneServiceImpl)(implicit ec: ExecutionContext)
+  extends AbstractController(cc)
+    with play.api.i18n.I18nSupport {
 
   private def validatePhoneNumber(number: String): Boolean = {
     val reg: Regex = """^([+])(\d)(\d{10})$""".r
     reg.pattern.matcher(number).matches
   }
 
-  def phones() = Action.async { request =>
-    phoneService.getAllPhones
-      .map(list => Ok(Json.toJson(list)))
+  implicit def toResult[T](f: Future[T])(implicit writes: Writes[T]): Future[Result] = {
+    f.map(data => Response(0, Some("Executed successfully"), Some(data)))
+      .recover { case e => Response(1, Some(e.getMessage), None) }
+      .map(resp => Ok(resp.toJson))
   }
 
-  def addPhoneNumber = Action(parse.json) { request =>
+  def phones = Action.async { _ =>
+    phoneService.getAllPhones
+  }
+
+  def addPhoneNumber = Action.async(parse.json) { request =>
     val phoneResult = request.body.validate[Phone]
     phoneResult.fold(
       errors => {
-        BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(errors)))
+        Future.successful(BadRequest(Json.obj("errorCode" -> 1, "message" -> JsError.toJson(errors))))
       },
       phone => {
         phoneService.addNewPhone(phone)
-        Ok(Json.obj("status" -> "OK", "message" -> s"Phone ${phone.number} saved."))
       }
     )
   }
 
-  def deletePhone(id: Int) = Action { request =>
-    phoneService.deletePhone(id)
-    Ok(Json.obj("status" -> "OK", "message" -> s"Phone with id $id deleted."))
+  def deletePhone(number: String) = Action.async { _ =>
+      phoneService.deletePhone(number)
   }
 
-  def updatePhone(id: Int) = Action(parse.json) { request =>
+  def updatePhone(number: String) = Action.async(parse.json) { request =>
     val phoneResult = request.body.validate[Phone]
     phoneResult.fold(
       errors => {
-        BadRequest(Json.obj("status" -> "KO", "message" -> JsError.toJson(errors)))
+        Future.successful(BadRequest(Json.obj("errorCode" -> 1, "message" -> JsError.toJson(errors))))
       },
       phone => {
-        phoneService.updatePhoneData(id, phone)
-        Ok(Json.obj("status" -> "OK", "message" -> s"Phone #$id updated."))
+        phoneService.updatePhoneData(number, phone)
       }
     )
+  }
+
+  def searchPhoneByNumber(number: String) = Action.async { _ =>
+    phoneService.searchPhoneByNumber(number)
+  }
+
+  def searchPhoneByName(name: String) = Action.async { _ =>
+    phoneService.searchPhoneByName(name)
   }
 }

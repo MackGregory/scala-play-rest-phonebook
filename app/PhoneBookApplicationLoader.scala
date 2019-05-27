@@ -1,10 +1,9 @@
-package configs
-
+import play.api.ApplicationLoader.Context
 import play.api._
 import play.api.mvc._
-import play.api.ApplicationLoader.Context
-import play.filters.cors.{CORSConfig, CORSFilter}
 import play.api.routing.Router
+import play.filters.cors.{CORSConfig, CORSFilter}
+import services.PhoneComponents
 
 class PhoneBookApplicationLoader extends ApplicationLoader {
   def load(context: Context): Application = new PhoneBookComponents(context).application

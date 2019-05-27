@@ -12,9 +12,9 @@ trait DBQueriesRepo {
 
   def create(phone: Phone): Future[Phone]
 
-  def delete(id: Int): Future[Unit]
+  def delete(number: String): Future[String]
 
-  def update(id: Int, phone: Phone): Future[Phone]
+  def update(number: String, phone: Phone): Future[Phone]
 
   def searchByNumber(number: String): Future[List[Phone]]
 
@@ -22,66 +22,63 @@ trait DBQueriesRepo {
 }
 
 class DBQueriesRepoImpl(implicit ec: ExecutionContext) extends DBQueriesRepo {
-  //============================
-  val connection: Connection = {
+  def getConnection: Connection = {
     Class.forName(driver)
     DriverManager.getConnection(url, username, password)
   }
 
-  //==============================================
   override def all: Future[List[Phone]] = Future {
+    val connection = getConnection
     val resultSet: ResultSet = connection.createStatement.executeQuery(
       "SELECT * FROM phone")
-    val result = resultSetToPhonesList(resultSet)
+    val phones = resultSetToPhonesList(resultSet)
     connection.close()
-    Thread.sleep(100)
-    result
+    phones
   }
 
-  //=========================================================
   override def create(phone: Phone): Future[Phone] = Future {
+    val connection = getConnection
     connection.createStatement.executeUpdate(
       s"INSERT INTO phonebookdb.phone (number, name) VALUES ('${phone.number}', '${phone.name}')")
     //TODO: FIX SQL QUERIES (prepared statement)
     connection.close()
-    Thread.sleep(100)
     phone
   }
 
-  //===================================================
-  override def delete(id: Int): Future[Unit] = Future {
+  override def delete(number: String): Future[String] = Future {
+    val connection = getConnection
     connection.createStatement.executeUpdate(
-      s"DELETE FROM phonebookdb.phone WHERE (id = '$id')")
+      s"DELETE FROM phonebookdb.phone WHERE (number = '$number')")
     connection.close()
+    s"Phone number $number deleted"
   }
 
-  //==================================================================
-  override def update(id: Int, phone: Phone): Future[Phone] = Future {
+  override def update(number: String, phone: Phone): Future[Phone] = Future {
+    val connection = getConnection
     connection.createStatement.executeUpdate(
-      s"UPDATE phonebookdb.phone SET number = '${phone.number}', name = '${phone.name}' WHERE (id = '$id')")
+      s"UPDATE phonebookdb.phone SET number = '${phone.number}', name = '${phone.name}' WHERE (number = '$number')")
     connection.close()
     phone
   }
 
-  //=========================================================================
   override def searchByNumber(number: String): Future[List[Phone]] = Future {
+    val connection = getConnection
     val resultSet: ResultSet = connection.createStatement.executeQuery(
       s"SELECT * FROM phone WHERE number LIKE '%$number%'")
-    val result = resultSetToPhonesList(resultSet)
+    val phones = resultSetToPhonesList(resultSet)
     connection.close()
-    result
+    phones
   }
 
-  //=====================================================================
   override def searchByName(name: String): Future[List[Phone]] = Future {
+    val connection = getConnection
     val resultSet: ResultSet = connection.createStatement.executeQuery(
       s"SELECT * FROM phone WHERE name LIKE '%$name%'")
-    val result = resultSetToPhonesList(resultSet)
+    val phones = resultSetToPhonesList(resultSet)
     connection.close()
-    result
+    phones
   }
 
-  //======================================================================
   private def resultSetToPhonesList(resultSet: ResultSet): List[Phone] = {
     new Iterator[Phone] {
       def hasNext: Boolean = resultSet.next()
