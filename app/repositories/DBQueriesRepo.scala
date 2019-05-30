@@ -1,9 +1,9 @@
 package repositories
 
-import models.Phone
 import java.sql.{Connection, DriverManager, ResultSet}
 
 import configs.DBParameters._
+import models.Phone
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -19,6 +19,8 @@ trait DBQueriesRepo {
   def searchByNumber(number: String): Future[List[Phone]]
 
   def searchByName(name: String): Future[List[Phone]]
+
+  def getPhone(number: String): Future[Option[Phone]]
 }
 
 class DBQueriesRepoImpl(implicit ec: ExecutionContext) extends DBQueriesRepo {
@@ -36,11 +38,19 @@ class DBQueriesRepoImpl(implicit ec: ExecutionContext) extends DBQueriesRepo {
     phones
   }
 
+  override def getPhone(number: String): Future[Option[Phone]] = Future{
+    val connection = getConnection
+    val resultSet: ResultSet = connection.createStatement.executeQuery(
+      s"SELECT * FROM phone WHERE number = '$number'")
+    val phones = resultSetToPhonesList(resultSet)
+    connection.close()
+    phones.headOption
+  }
+
   override def create(phone: Phone): Future[Phone] = Future {
     val connection = getConnection
     connection.createStatement.executeUpdate(
       s"INSERT INTO phonebookdb.phone (number, name) VALUES ('${phone.number}', '${phone.name}')")
-    //TODO: FIX SQL QUERIES (prepared statement)
     connection.close()
     phone
   }

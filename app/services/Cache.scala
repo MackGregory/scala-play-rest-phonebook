@@ -8,20 +8,25 @@ trait Cache{
   def add(phone: Phone): Unit
   def add(phones: List[Phone]): Unit
   def isCached(phone: Phone): Boolean
+  def remove(number: String): Unit
+  def get(number: String): Option[Phone]
 }
 
 class CacheImpl extends Cache{
-  val cache: mutable.Map[String, Phone] = mutable.Map.empty
+  @volatile private var cache: mutable.Map[String, Phone] = mutable.Map.empty
 
-  override def add(phone: Phone): Unit = {
+  override def add(phone: Phone): Unit =
     cache += (phone.number -> phone)
-  }
 
-  override def add(phones: List[Phone]): Unit = {
+  override def add(phones: List[Phone]): Unit =
     phones.foreach(add)
-  }
 
-  override def isCached(phone: Phone): Boolean = {
+  override def isCached(phone: Phone): Boolean =
     cache.contains(phone.number)
-  }
+
+  override def remove(number: String): Unit =
+    cache.remove(number)
+
+  override def get(number: String): Option[Phone] =
+    cache.get(number)
 }

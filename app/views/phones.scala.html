@@ -1,13 +1,9 @@
-@(phones: List[Phone], phoneForm: Form[(String, String)])(implicit requestHeader: RequestHeader, messagesProvider: MessagesProvider)
-
-@import helper._
+@(phones: List[Phone], phoneForm: Form[(String, String)])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @main("Phonebook") {
   <table style="text-align: center; border: 1px double black; width: 100%;">
     <tr><th>Number</th><th>Name</th></tr>
     @phones.map { phone =>
-      <tr><th>@phone.number</th><th>@phone.name</th></tr>
-    }
+      <tr><th>@phone.number</th><th>@phone.name</th></tr>}
   </table>
-
 }
