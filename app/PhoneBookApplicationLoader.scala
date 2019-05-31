@@ -9,7 +9,8 @@ class PhoneBookApplicationLoader extends ApplicationLoader {
   def load(context: Context): Application = new PhoneBookComponents(context).application
 }
 
-class PhoneBookComponents(context: Context) extends BuiltInComponentsFromContext(context) with PhoneComponents {
+class PhoneBookComponents(context: Context) extends BuiltInComponentsFromContext(context)
+  with PhoneComponents {
 
   val routes: PartialFunction[RequestHeader, Handler] = phoneRoutes
 
@@ -19,6 +20,5 @@ class PhoneBookComponents(context: Context) extends BuiltInComponentsFromContext
     val corsConfig = CORSConfig.fromConfiguration(configuration)
     CORSFilter(corsConfig)
   }
-
   override def httpFilters: Seq[EssentialFilter] = List(corsFilter)
 }

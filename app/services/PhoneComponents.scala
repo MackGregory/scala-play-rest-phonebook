@@ -18,7 +18,7 @@ trait PhoneComponents extends WithControllerComponents with SimpleRouter {
       homeController.searchPhoneByNumber(number.getOrElse(""))
     case GET(p"/phones/searchByNameSub" ? q_?"name=$name") =>
       homeController.searchPhoneByName(name.getOrElse(""))
-    case POST(p"/phones/delete/$number") =>
+    case DELETE(p"/phones/delete/$number") =>
       homeController.deletePhone(number)
     case POST(p"/phones/addPhone") =>
       homeController.addPhone

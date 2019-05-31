@@ -50,7 +50,7 @@ class DBQueriesRepoImpl(implicit ec: ExecutionContext) extends DBQueriesRepo {
   override def create(phone: Phone): Future[Phone] = Future {
     val connection = getConnection
     connection.createStatement.executeUpdate(
-      s"INSERT INTO phonebookdb.phone (number, name) VALUES ('${phone.number}', '${phone.name}')")
+      s"INSERT INTO phone (number, name) VALUES ('${phone.number}', '${phone.name}')")
     connection.close()
     phone
   }
@@ -58,7 +58,7 @@ class DBQueriesRepoImpl(implicit ec: ExecutionContext) extends DBQueriesRepo {
   override def delete(number: String): Future[String] = Future {
     val connection = getConnection
     connection.createStatement.executeUpdate(
-      s"DELETE FROM phonebookdb.phone WHERE (number = '$number')")
+      s"DELETE FROM phone WHERE (number = '$number')")
     connection.close()
     s"Phone number $number deleted"
   }
@@ -66,7 +66,7 @@ class DBQueriesRepoImpl(implicit ec: ExecutionContext) extends DBQueriesRepo {
   override def update(number: String, phone: Phone): Future[Phone] = Future {
     val connection = getConnection
     connection.createStatement.executeUpdate(
-      s"UPDATE phonebookdb.phone SET number = '${phone.number}', name = '${phone.name}' WHERE (number = '$number')")
+      s"UPDATE phone SET number = '${phone.number}', name = '${phone.name}' WHERE (number = '$number')")
     connection.close()
     phone
   }

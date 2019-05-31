@@ -4,7 +4,7 @@ import models.{Phone, Response}
 import play.api.libs.json._
 import play.api.mvc._
 import services.PhoneServiceImpl
-import utils.InvalidPhoneNumber
+import utils.{FailedToParseJson, InvalidPhoneNumber}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.matching.Regex
@@ -31,7 +31,7 @@ class HomeController (cc: ControllerComponents, phoneService: PhoneServiceImpl)(
   def addPhone: Action[JsValue] = Action.async(parse.json) { request =>
     request.body.validate[Phone].fold(
       errors => {
-        Future.successful(BadRequest(Json.obj("errorCode" -> 1, "message" -> JsError.toJson(errors))))
+        toResult(Future.failed[Phone](new FailedToParseJson))
       },
       phone => {
         if(validatePhoneNumber(phone.number)) {
@@ -54,7 +54,7 @@ class HomeController (cc: ControllerComponents, phoneService: PhoneServiceImpl)(
   def updatePhone(number: String): Action[JsValue] = Action.async(parse.json) { request =>
     request.body.validate[Phone].fold(
       errors => {
-        Future.successful(BadRequest(Json.obj("errorCode" -> 1, "message" -> JsError.toJson(errors))))
+        toResult(Future.failed[Phone](new FailedToParseJson))
       },
       phone => {
         if(validatePhoneNumber(phone.number))
@@ -66,7 +66,7 @@ class HomeController (cc: ControllerComponents, phoneService: PhoneServiceImpl)(
   }
 
   def searchPhoneByNumber(number: String): Action[AnyContent] = Action.async { _ =>
-    phoneService.searchPhoneByNumber(number)
+      phoneService.searchPhoneByNumber(number)
   }
 
   def searchPhoneByName(name: String): Action[AnyContent] = Action.async { _ =>
