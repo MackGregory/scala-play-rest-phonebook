@@ -18,7 +18,7 @@
 
 ```
 
-###GET         /phones/searchByNumberSub/ ? q_?"number=$number"
+###GET         /phones/searchByNumberSub?number=
 Возвращает список телефонов, содержащих подстроку в номере
 Запрос:  
 `localhost:9000/phones/searchByNumberSub?number=001`  
@@ -27,7 +27,7 @@
 
 ```
 
-###GET         /phones/searchByNameSub ? q_?"name=$name"
+###GET         /phones/searchByNameSub?name=
 Возвращает список телефонов, содержащих подстроку в имени  
 Запрос:  
 `localhost:9000/phones/searchByNameSub?name=ivan`  
@@ -62,7 +62,8 @@
 ```
 
 ###POST        /phones/update/$number
-Изменить данные телефона.  
+Изменить данные телефона.
+Если указанного номера в базе не существует, то создастся телефон, с данными из тела запроса.
 Запрос:  
 `localhost:9000/phones/update/+7000000001`  
 Тело запроса:  
