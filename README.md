@@ -1,33 +1,82 @@
-Реализованные запросы:
-GET         /phones
-Возвращает список всех телефонов 
-
-GET         /phones/searchByNumberSub/ ? q_?"number=$number"
-Возвращает список телефонов, содержащих подстроку в номере
-Пример: localhost:9000/phones/searchByNumberSub?number=001
-
-GET         /phones/searchByNameSub ? q_?"name=$name"
-Возвращает список телефонов, содержащих подстроку в имени
-Пример: localhost:9000/phones/searchByNameSub?name=ivan
-
-DELETE      /phones/delete/$number
-Удалить телефон
-
-POST        /phones/addPhone
-Добавить телефон. 
-В теле запроса Json вида: {"name": "<имя>", "number": "<номер телефона>"}
-
-POST        /phones/update/$number
-Изменить данные телефона. 
-В теле запроса Json вида: {"name": "<имя>", "number": "<номер телефона>"}
-Пример: localhost:9000/phones/update/+7000000001
-        В теле json: {"name": "Ivanov", "number": "+7100200300"}
-
-Все запросы отвечают Json-ом вида: 
+# REST
+Все запросы отвечают Json-ом вида:  
+```json
 {
     "errorCode": <0 - успешное выполнение \ 1 - ошибки при выполнении>,
     "message": "<сообщение>",
     "data": [{Json в случае успешного выполнения, Null - в случае ошибки}]
 }
+```
+
+Реализованные запросы:
+###GET         /phones
+Возвращает список всех телефонов  
+Запрос:  
+`localhost:9000/phones`  
+Ответ:  
+```json
+
+```
+
+###GET         /phones/searchByNumberSub/ ? q_?"number=$number"
+Возвращает список телефонов, содержащих подстроку в номере
+Запрос:  
+`localhost:9000/phones/searchByNumberSub?number=001`  
+Ответ:  
+```json
+
+```
+
+###GET         /phones/searchByNameSub ? q_?"name=$name"
+Возвращает список телефонов, содержащих подстроку в имени  
+Запрос:  
+`localhost:9000/phones/searchByNameSub?name=ivan`  
+Ответ:  
+```json
+
+```
+
+###DELETE      /phones/delete/$number
+Удалить телефон  
+Запрос:  
+`localhost:9000/phones/delete/$number`  
+Ответ:  
+```json
+
+```
+
+###POST        /phones/addPhone 
+Добавить телефон.   
+Запрос:  
+`/phones/addPhone`  
+Тело запроса:  
+```json
+{
+  "name": "<имя>",
+  "number": "<номер телефона>"
+}
+```
+Ответ:  
+```json
+
+```
+
+###POST        /phones/update/$number
+Изменить данные телефона.  
+Запрос:  
+`localhost:9000/phones/update/+7000000001`  
+Тело запроса:  
+```json
+{
+  "name": "<имя>",
+  "number": "<номер телефона>"
+}
+```
+Ответ:  
+```json
+
+```
+
+#Конфигурация
 
 Параметры подключения к БД /app/configs/DBParameters
