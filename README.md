@@ -9,7 +9,7 @@
 ```
 
 Реализованные запросы:
-###GET         /phones
+### GET         /phones
 Возвращает список всех телефонов  
 Запрос:  
 `localhost:9000/phones`  
@@ -18,7 +18,7 @@
 
 ```
 
-###GET         /phones/searchByNumberSub?number=
+### GET         /phones/searchByNumberSub?number=
 Возвращает список телефонов, содержащих подстроку в номере
 Запрос:  
 `localhost:9000/phones/searchByNumberSub?number=001`  
@@ -27,7 +27,7 @@
 
 ```
 
-###GET         /phones/searchByNameSub?name=
+### GET         /phones/searchByNameSub?name=
 Возвращает список телефонов, содержащих подстроку в имени  
 Запрос:  
 `localhost:9000/phones/searchByNameSub?name=ivan`  
@@ -36,7 +36,7 @@
 
 ```
 
-###DELETE      /phones/delete/$number
+### DELETE      /phones/delete/$number
 Удалить телефон  
 Запрос:  
 `localhost:9000/phones/delete/$number`  
@@ -45,7 +45,7 @@
 
 ```
 
-###POST        /phones/addPhone 
+### POST        /phones/addPhone 
 Добавить телефон.   
 Запрос:  
 `/phones/addPhone`  
@@ -61,7 +61,7 @@
 
 ```
 
-###POST        /phones/update/$number
+### POST        /phones/update/$number
 Изменить данные телефона.
 Если указанного номера в базе не существует, то создастся телефон, с данными из тела запроса.
 Запрос:  
