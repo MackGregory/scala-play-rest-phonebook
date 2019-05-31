@@ -20,6 +20,8 @@ POST        /phones/addPhone
 POST        /phones/update/$number
 Изменить данные телефона. 
 В теле запроса Json вида: {"name": "<имя>", "number": "<номер телефона>"}
+Пример: localhost:9000/phones/update/+7000000001
+        В теле json: {"name": "Ivanov", "number": "+7100200300"}
 
 Все запросы отвечают Json-ом вида: 
 {
